@@ -31,12 +31,12 @@ public class LoggerAspect {
     private final int MAX_EXCEPTION_STACK_LINE = 6;
 
     @Around("execution(* com.centime.hello.controller.*.*(..)))")
-    public Object logOrsController(ProceedingJoinPoint joinPoint) throws Throwable {
+    public Object logHelloController(ProceedingJoinPoint joinPoint) throws Throwable {
         return handleControllerInvocation(joinPoint);
     }
 
-    @Around("execution(* com.centime.hello.controller.*.*.*(..))")
-    public Object logBookingController(ProceedingJoinPoint joinPoint) throws Throwable {
+    @Around("execution(* com.centime.concatenaton.controller.*.*(..))")
+    public Object logConcatenationController(ProceedingJoinPoint joinPoint) throws Throwable {
         return handleControllerInvocation(joinPoint);
     }
 
