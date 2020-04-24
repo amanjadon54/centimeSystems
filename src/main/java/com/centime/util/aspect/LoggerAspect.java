@@ -2,6 +2,7 @@ package com.centime.util.aspect;
 
 import com.centime.util.LogUtils;
 import com.centime.util.LoggingLevel;
+import com.centime.util.constants.StringConstants;
 import com.centime.util.exception.CustomRuntimeException;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.map.HashedMap;
@@ -40,6 +41,11 @@ public class LoggerAspect {
         return handleControllerInvocation(joinPoint);
     }
 
+    @Around("execution(* com.centime.greeting.controller.*.*(..))")
+    public Object logGreetingController(ProceedingJoinPoint joinPoint) throws Throwable {
+        return handleControllerInvocation(joinPoint);
+    }
+
     //This will log all the methods which are throwing any exception
     @AfterThrowing(value = "execution(* com.centime.*.*.*(..))", throwing = "e")
     public void allMethodException(JoinPoint joinPoint, Exception e) {
@@ -66,10 +72,22 @@ public class LoggerAspect {
         //get params and their values
         List<String> paramsNamesList =
                 new ArrayList<>(Arrays.asList(((CodeSignature) joinPoint.getSignature()).getParameterNames()));
+
+        int headerIndex = paramsNamesList.indexOf(StringConstants.HEADERS);
+        int logIndex = paramsNamesList.indexOf(LogUtils.logId);
         Object[] argsArray = joinPoint.getArgs();
 
+        //fetching from X-Request-ID if not provide a log
+        Map<String, String> headersValues = (Map<String, String>) argsArray[headerIndex];
+        String logId = null;
+        if (headersValues.containsKey(StringConstants.X_REQUEST_ID)) {
+            logId = headersValues.get(StringConstants.X_REQUEST_ID);
+        } else {
+            logId = LogUtils.getLogId();
+        }
+
         //assign logId to the last param name
-        String logId = LogUtils.getLogId();
+        argsArray[logIndex] = logId;
         if (!CollectionUtils.isEmpty(paramsNamesList) && paramsNamesList.get(paramsNamesList.size() - 1)
                 .equalsIgnoreCase(LogUtils.logId)) {
             argsArray[argsArray.length - 1] = logId;
@@ -85,8 +103,8 @@ public class LoggerAspect {
         logParams(paramsNamesList, paramsValuesList, LoggingLevel.ERROR);
         try {
             //removing header logs
-            paramsValuesList.remove(0);
-            paramsNamesList.remove(0);
+            paramsValuesList.remove(headerIndex);
+            paramsNamesList.remove(headerIndex);
 
             //method proceeds
             Object response = joinPoint.proceed(argsArray);

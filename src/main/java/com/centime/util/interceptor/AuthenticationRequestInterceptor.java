@@ -1,5 +1,6 @@
 package com.centime.util.interceptor;
 
+import com.centime.util.exception.CustomRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,6 +9,9 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import static com.centime.util.constants.StringConstants.ACCESS_TOKEN;
+import static com.centime.util.constants.StringConstants.X_REQUEST_ID;
 
 public class AuthenticationRequestInterceptor extends HandlerInterceptorAdapter {
 
@@ -19,19 +23,16 @@ public class AuthenticationRequestInterceptor extends HandlerInterceptorAdapter 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws NumberFormatException {
-        String token = request.getHeader("access-token");
+        String token = request.getHeader(ACCESS_TOKEN);
         if (token == null || token.equals("")) {
             logger.info("Authentication failed as no access token passed");
-            return false;
+            throw new CustomRuntimeException("Access Denied", 401, request.getHeader(X_REQUEST_ID));
         }
-        boolean isAuth = false;
-        if (token.equals(staticToken))
-            isAuth = true;
-        if (isAuth) {
+        if (token.equals(staticToken)) {
             return true;
         } else {
             logger.info("Authentication failed");
-            throw new RuntimeException("Error " + HttpStatus.FORBIDDEN);
+            throw new CustomRuntimeException("Not Authorized" + HttpStatus.FORBIDDEN, 403, request.getHeader(X_REQUEST_ID));
         }
     }
 }
