@@ -35,13 +35,13 @@ public class LoggerAspect {
         return handleControllerInvocation(joinPoint);
     }
 
-    @Around("execution(* com.centime.concatenaton.controller.*.*(..))")
+    @Around("execution(* com.centime.concatenation.controller.*.*(..))")
     public Object logConcatenationController(ProceedingJoinPoint joinPoint) throws Throwable {
         return handleControllerInvocation(joinPoint);
     }
 
     //This will log all the methods which are throwing any exception
-    @AfterThrowing(value = "execution(* com.centime.hello.*.*.*(..))", throwing = "e")
+    @AfterThrowing(value = "execution(* com.centime.*.*.*(..))", throwing = "e")
     public void allMethodException(JoinPoint joinPoint, Exception e) {
         handleAllException(joinPoint, e);
     }
