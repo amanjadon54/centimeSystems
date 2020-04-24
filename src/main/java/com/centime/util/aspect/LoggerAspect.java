@@ -8,6 +8,7 @@ import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -34,10 +35,10 @@ public class LoggerAspect {
         return handleControllerInvocation(joinPoint);
     }
 
-//    @Around("execution(* com.centime.hello.controller.*.*.*(..))")
-//    public Object logBookingController(ProceedingJoinPoint joinPoint) throws Throwable {
-//        return handleControllerInvocation(joinPoint);
-//    }
+    @Around("execution(* com.centime.hello.controller.*.*.*(..))")
+    public Object logBookingController(ProceedingJoinPoint joinPoint) throws Throwable {
+        return handleControllerInvocation(joinPoint);
+    }
 
     //This will log all the methods which are throwing any exception
     @AfterThrowing(value = "execution(* com.centime.hello.*.*.*(..))", throwing = "e")
@@ -62,7 +63,6 @@ public class LoggerAspect {
     private Object handleControllerInvocation(ProceedingJoinPoint joinPoint) throws Throwable {
 
         long startTime = new Date().getTime();
-
         //get params and their values
         List<String> paramsNamesList =
                 new ArrayList<>(Arrays.asList(((CodeSignature) joinPoint.getSignature()).getParameterNames()));
@@ -81,13 +81,19 @@ public class LoggerAspect {
         paramsNamesList.add(LogUtils.methodName);
         paramsValuesList.add(joinPoint.getSignature().getName());
 
-
+        //printing Request logs
+        logParams(paramsNamesList, paramsValuesList, LoggingLevel.ERROR);
         try {
+            //removing header logs
+            paramsValuesList.remove(0);
+            paramsNamesList.remove(0);
+
             //method proceeds
             Object response = joinPoint.proceed(argsArray);
             long endTime = new Date().getTime();
-
             if (logApiResponse) {
+                //assuming request header is always the first object
+
                 paramsNamesList.add(LogUtils.response);
                 paramsValuesList.add(response);
             }
