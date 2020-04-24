@@ -20,7 +20,6 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 @Aspect
-@Component
 public class LoggerAspect {
 
     @Value("${log.api.response:true}")
@@ -35,13 +34,13 @@ public class LoggerAspect {
         return handleControllerInvocation(joinPoint);
     }
 
-    @Around("execution(* com.cemtime.hms_orchestration_service.controller.*.*.*(..))")
-    public Object logBookingController(ProceedingJoinPoint joinPoint) throws Throwable {
-        return handleControllerInvocation(joinPoint);
-    }
+//    @Around("execution(* com.centime.hello.controller.*.*.*(..))")
+//    public Object logBookingController(ProceedingJoinPoint joinPoint) throws Throwable {
+//        return handleControllerInvocation(joinPoint);
+//    }
 
     //This will log all the methods which are throwing any exception
-    @AfterThrowing(value = "execution(* com.oyo.hms_orchestration_service.*.*.*(..))", throwing = "e")
+    @AfterThrowing(value = "execution(* com.centime.hello.*.*.*(..))", throwing = "e")
     public void allMethodException(JoinPoint joinPoint, Exception e) {
         handleAllException(joinPoint, e);
     }
