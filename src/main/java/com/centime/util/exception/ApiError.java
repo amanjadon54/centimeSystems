@@ -12,12 +12,24 @@ public class ApiError implements Serializable {
     private String message;
     private String developerMessage;
 
+    public ApiError(Integer httpStatus, String message) {
+        this.message = message;
+        this.status = httpStatus;
+    }
+
     public ApiError(HttpStatus httpStatus, String message, String developerMessage) {
         super();
         this.message = message;
         this.status = httpStatus.value();
         this.httpStatus = httpStatus;
         this.developerMessage = developerMessage;
+    }
+
+    public ApiError(HttpStatus httpStatus, String message) {
+        super();
+        this.message = message;
+        this.status = httpStatus.value();
+        this.httpStatus = httpStatus;
     }
 
     public Integer getStatus() {
