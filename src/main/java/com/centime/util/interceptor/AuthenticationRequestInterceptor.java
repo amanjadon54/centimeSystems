@@ -4,7 +4,6 @@ import com.centime.util.exception.CustomRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,7 +31,7 @@ public class AuthenticationRequestInterceptor extends HandlerInterceptorAdapter 
             return true;
         } else {
             logger.info("Authentication failed");
-            throw new CustomRuntimeException("Not Authorized" + HttpStatus.FORBIDDEN, 403, request.getHeader(X_REQUEST_ID));
+            throw new CustomRuntimeException("Not Authorized", 403, request.getHeader(X_REQUEST_ID));
         }
     }
 }

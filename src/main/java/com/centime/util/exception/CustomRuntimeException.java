@@ -11,10 +11,10 @@ public class CustomRuntimeException extends RuntimeException {
     private String developerMsg;
     private String logId;
 
-    public CustomRuntimeException(String message, Integer status, String logId) {
+    public CustomRuntimeException(String message, Integer status, String developerMsg) {
         this.message = message;
         this.status = status;
-        this.logId = logId;
+        this.developerMsg = developerMsg;
     }
 
     public CustomRuntimeException(String message, Integer status, String developerMsg, String logId) {
