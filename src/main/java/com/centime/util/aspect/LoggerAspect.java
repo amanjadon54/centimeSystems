@@ -100,7 +100,7 @@ public class LoggerAspect {
         paramsValuesList.add(joinPoint.getSignature().getName());
 
         //printing Request logs
-        logParams(paramsNamesList, paramsValuesList, LoggingLevel.ERROR);
+        logParams(paramsNamesList, paramsValuesList, LoggingLevel.INFO);
         try {
             //removing header logs
             paramsValuesList.remove(headerIndex);
